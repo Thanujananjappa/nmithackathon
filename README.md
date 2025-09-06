@@ -107,13 +107,15 @@ Chair (Home, ₹3,000)
 ```
 
 🛠️ Tech Stack
+
 Backend: Node.js, Express
 
 Database: SQLite
 
 Authentication: JWT
 
-Frontend: React (if included)
+Frontend: React 
+
 
 🤝 Contributing
 Fork this repo
