@@ -16,6 +16,7 @@ This project is a simple marketplace platform where users can sign up, log in, a
 ---
 
 ## 📂 Project Structure
+```bash
 nmithackathon-main/
 │
 ├── server/ # Backend (Express + SQLite)
@@ -29,7 +30,7 @@ nmithackathon-main/
 ├── client/ (optional) # React frontend if included
 │
 └── README.md
-
+```
 
 
 ---
