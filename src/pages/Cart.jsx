@@ -10,6 +10,7 @@ const Cart = () => {
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
+  const [address, setAddress] = useState(''); // ✅ Delivery address
 
   useEffect(() => {
     fetchCart();
@@ -36,12 +37,24 @@ const Cart = () => {
   };
 
   const handleCheckout = async () => {
+    if (!address.trim()) {
+      setError('Please enter your delivery address!');
+      return;
+    }
+
     setProcessing(true);
     try {
-      await purchaseAPI.checkout();
-      setMessage('Purchase completed successfully!');
+      await purchaseAPI.checkout({
+        cartItems,
+        address,
+        paymentMethod: 'Cash on Delivery',
+      });
+
+      setMessage(`✅ Purchase completed successfully! Your order will be delivered to: ${address}`);
       setCartItems([]);
-      setTimeout(() => setMessage(''), 3000);
+      setAddress('');
+      setError('');
+      setTimeout(() => setMessage(''), 4000);
     } catch (err) {
       setError(err.response?.data?.error || 'Checkout failed');
     } finally {
@@ -87,6 +100,7 @@ const Cart = () => {
           </div>
         </div>
 
+        {/* Messages */}
         {message && (
           <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg mb-6">
             {message}
@@ -115,12 +129,13 @@ const Cart = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Cart Items */}
             <div className="lg:col-span-2 space-y-4">
               {cartItems.map((item) => (
                 <div key={item.cart_id} className="bg-white rounded-xl shadow-sm overflow-hidden">
                   <div className="flex">
                     <img
-                      src={item.image || "/placeholder.png"}  // ✅ FIXED
+                      src={item.image || "/placeholder.png"} // ✅ fallback fix
                       alt={item.title}
                       className="w-24 h-24 object-cover"
                     />
@@ -129,7 +144,7 @@ const Cart = () => {
                       <div className="flex justify-between items-start">
                         <div className="flex-1">
                           <Link
-                            to={`/product/${item.id}`}
+                            to={`/product/${item.id}`} // ✅ fixed template string
                             className="text-lg font-semibold text-gray-800 hover:text-emerald-600 transition-colors"
                           >
                             {item.title}
@@ -163,6 +178,7 @@ const Cart = () => {
               ))}
             </div>
 
+            {/* Order Summary */}
             <div className="lg:col-span-1">
               <div className="bg-white rounded-xl shadow-sm p-6 sticky top-8">
                 <h3 className="text-lg font-semibold text-gray-800 mb-4">Order Summary</h3>
@@ -183,6 +199,18 @@ const Cart = () => {
                   </div>
                 </div>
 
+                {/* Address Input */}
+                <textarea
+                  className="w-full border p-2 rounded-lg mb-4"
+                  placeholder="Enter your delivery address"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                />
+
+                <p className="text-sm text-gray-600 mb-2">
+                  Payment Method: <b>Cash on Delivery</b>
+                </p>
+
                 <button
                   onClick={handleCheckout}
                   disabled={processing || cartItems.length === 0}
@@ -193,13 +221,13 @@ const Cart = () => {
                   ) : (
                     <>
                       <CreditCard className="h-5 w-5 mr-2" />
-                      Proceed to Checkout
+                      Confirm Order
                     </>
                   )}
                 </button>
 
                 <p className="text-xs text-gray-500 text-center mt-3">
-                  Secure checkout powered by EcoFinds
+                  Cash on Delivery — pay when you receive your order
                 </p>
               </div>
             </div>
