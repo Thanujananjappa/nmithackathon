@@ -123,23 +123,3 @@ Create a new branch (feature/my-feature)
 Commit changes
 
 Push and open a PR
-
-📜 License
-This project is licensed under the MIT License.
-
-```yaml
-
-
----
-
-⚡ This version is **clean, hackathon-ready, and developer-friendly**.  
-
-Do you also want me to add a **Problem → Solution → Impact** section (for judges/pitch deck style), or should I keep it strictly technical?
-
-
-
-```
-
-
-
-
