@@ -24,7 +24,10 @@ const Purchases = () => {
     }
   };
 
-  const totalSpent = purchases.reduce((total, purchase) => total + parseFloat(purchase.price), 0);
+  const totalSpent = purchases.reduce(
+    (total, purchase) => total + parseFloat(purchase.price),
+    0
+  );
 
   if (loading) {
     return (
@@ -45,9 +48,13 @@ const Purchases = () => {
                 <Package className="h-6 w-6 text-emerald-600" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-800">Purchase History</h1>
+                <h1 className="text-2xl font-bold text-gray-800">
+                  Purchase History
+                </h1>
                 <p className="text-gray-600">
-                  {purchases.length} {purchases.length === 1 ? 'purchase' : 'purchases'} • Total spent: ${totalSpent.toFixed(2)}
+                  {purchases.length}{' '}
+                  {purchases.length === 1 ? 'purchase' : 'purchases'} • Total
+                  spent: ${totalSpent.toFixed(2)}
                 </p>
               </div>
             </div>
@@ -65,7 +72,9 @@ const Purchases = () => {
             <div className="text-gray-500">
               <Package className="h-16 w-16 mx-auto mb-4 opacity-50" />
               <h3 className="text-xl font-semibold mb-2">No purchases yet</h3>
-              <p className="mb-6">Start exploring products and make your first purchase</p>
+              <p className="mb-6">
+                Start exploring products and make your first purchase
+              </p>
               <Link
                 to="/"
                 className="inline-flex items-center bg-emerald-600 text-white px-6 py-3 rounded-lg hover:bg-emerald-700 transition-colors"
@@ -76,15 +85,18 @@ const Purchases = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {purchases.map(purchase => (
-              <div key={purchase.id} className="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+            {purchases.map((purchase) => (
+              <div
+                key={purchase.id}
+                className="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow"
+              >
                 <div className="flex">
                   <img
-                    src={purchase.image}
+                    src={purchase.image || '/default.png'}
                     alt={purchase.title}
                     className="w-32 h-32 object-cover"
                   />
-                  
+
                   <div className="flex-1 p-4">
                     <div className="flex justify-between items-start mb-2">
                       <Link
@@ -94,7 +106,7 @@ const Purchases = () => {
                         {purchase.title}
                       </Link>
                     </div>
-                    
+
                     <div className="flex items-center space-x-4 text-sm text-gray-600 mb-3">
                       <div className="flex items-center">
                         <User className="h-4 w-4 mr-1" />

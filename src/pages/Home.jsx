@@ -37,7 +37,6 @@ const Home = () => {
   const handleAddToCart = async (productId) => {
     try {
       await cartAPI.addToCart(productId);
-      // Show success message or update UI
     } catch (err) {
       setError(err.response?.data?.error || 'Failed to add to cart');
       setTimeout(() => setError(''), 3000);
@@ -95,32 +94,22 @@ const Home = () => {
           </div>
         </div>
 
-        {/* Error Message */}
+        {/* Error */}
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4">
             {error}
           </div>
         )}
 
-        {/* Products Grid */}
+        {/* Products */}
         {loading ? (
           <div className="flex justify-center py-16">
             <LoadingSpinner size="lg" text="Loading products..." />
           </div>
         ) : products.length === 0 ? (
           <div className="text-center py-16">
-            <div className="text-gray-500 mb-4">
-              <Filter className="h-16 w-16 mx-auto mb-4 opacity-50" />
-              <h3 className="text-xl font-semibold mb-2">No products found</h3>
-              <p>Try adjusting your search or filters</p>
-            </div>
-            <Link
-              to="/add-product"
-              className="inline-flex items-center bg-emerald-600 text-white px-6 py-3 rounded-lg hover:bg-emerald-700 transition-colors"
-            >
-              <Plus className="h-5 w-5 mr-2" />
-              Be the first to list a product
-            </Link>
+            <h3 className="text-xl font-semibold mb-2">No products found</h3>
+            <p>Try adjusting your search or filters</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">

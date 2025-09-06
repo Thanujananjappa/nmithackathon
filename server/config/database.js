@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import sqlite3 from "sqlite3";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -16,6 +15,8 @@ class Database {
           console.error("❌ Error connecting to database:", err.message);
         } else {
           console.log("📦 Connected to SQLite database");
+          // ✅ Enable foreign key constraints
+          this.db.run("PRAGMA foreign_keys = ON");
         }
       }
     );
@@ -23,24 +24,6 @@ class Database {
 
   initializeDatabase() {
     // Users table
-=======
-const sqlite3 = require('sqlite3').verbose();
-const path = require('path');
-
-class Database {
-  constructor() {
-    this.db = new sqlite3.Database(path.join(__dirname, '../ecofinds.db'), (err) => {
-      if (err) {
-        console.error('Error connecting to database:', err);
-      } else {
-        console.log('📦 Connected to SQLite database');
-      }
-    });
-  }
-
-  initializeDatabase() {
-    // Create Users table
->>>>>>> 023e0233e18ebffa478909b04ae271af9a8767f9
     this.db.run(`
       CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -51,11 +34,7 @@ class Database {
       )
     `);
 
-<<<<<<< HEAD
-    // Products table
-=======
-    // Create Products table
->>>>>>> 023e0233e18ebffa478909b04ae271af9a8767f9
+    // Products table (✅ image is now NULL if not uploaded)
     this.db.run(`
       CREATE TABLE IF NOT EXISTS products (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -63,18 +42,14 @@ class Database {
         title TEXT NOT NULL,
         description TEXT,
         category TEXT NOT NULL,
-        price DECIMAL(10, 2) NOT NULL,
-        image TEXT DEFAULT 'https://images.pexels.com/photos/974911/pexels-photo-974911.jpeg',
+        price REAL NOT NULL,
+        image TEXT, 
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (user_id) REFERENCES users (id)
       )
     `);
 
-<<<<<<< HEAD
     // Cart table
-=======
-    // Create Cart table
->>>>>>> 023e0233e18ebffa478909b04ae271af9a8767f9
     this.db.run(`
       CREATE TABLE IF NOT EXISTS cart (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -86,11 +61,7 @@ class Database {
       )
     `);
 
-<<<<<<< HEAD
     // Purchases table
-=======
-    // Create Purchases table
->>>>>>> 023e0233e18ebffa478909b04ae271af9a8767f9
     this.db.run(`
       CREATE TABLE IF NOT EXISTS purchases (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -102,11 +73,7 @@ class Database {
       )
     `);
 
-<<<<<<< HEAD
     console.log("✅ Database tables initialized");
-=======
-    console.log('✅ Database tables initialized');
->>>>>>> 023e0233e18ebffa478909b04ae271af9a8767f9
   }
 
   getDb() {
@@ -114,10 +81,6 @@ class Database {
   }
 }
 
-<<<<<<< HEAD
 // 👇 Export as default so you can `import db from "../config/database.js"`
 const database = new Database();
 export default database;
-=======
-module.exports = new Database();
->>>>>>> 023e0233e18ebffa478909b04ae271af9a8767f9

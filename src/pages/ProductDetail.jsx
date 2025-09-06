@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { productAPI, cartAPI } from '../services/api';
 import LoadingSpinner from '../components/LoadingSpinner';
-import { ArrowLeft, ShoppingCart, User, Tag, Calendar, DollarSign } from 'lucide-react';
+import { ArrowLeft, ShoppingCart, User, Calendar, DollarSign } from 'lucide-react';
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -83,7 +83,7 @@ const ProductDetail = () => {
             {/* Product Image */}
             <div className="relative">
               <img
-                src={product.image}
+                src={product.image || '/default.png'}
                 alt={product.title}
                 className="w-full h-96 lg:h-full object-cover"
               />
@@ -100,7 +100,7 @@ const ProductDetail = () => {
                 <h1 className="text-3xl font-bold text-gray-800 mb-2">
                   {product.title}
                 </h1>
-                
+
                 <div className="flex items-center space-x-4 text-gray-600 mb-4">
                   <div className="flex items-center">
                     <User className="h-4 w-4 mr-1" />
@@ -108,23 +108,28 @@ const ProductDetail = () => {
                   </div>
                   <div className="flex items-center">
                     <Calendar className="h-4 w-4 mr-1" />
-                    <span>Listed {new Date(product.created_at).toLocaleDateString()}</span>
+                    <span>
+                      Listed {new Date(product.created_at).toLocaleDateString()}
+                    </span>
                   </div>
                 </div>
 
                 <div className="flex items-center mb-6">
                   <DollarSign className="h-8 w-8 text-emerald-600" />
                   <span className="text-4xl font-bold text-emerald-600">
-                    {parseFloat(product.price).toFixed(2)}
+                    ${parseFloat(product.price).toFixed(2)}
                   </span>
                 </div>
               </div>
 
               {/* Description */}
               <div className="mb-8">
-                <h3 className="text-lg font-semibold text-gray-800 mb-3">Description</h3>
+                <h3 className="text-lg font-semibold text-gray-800 mb-3">
+                  Description
+                </h3>
                 <p className="text-gray-600 leading-relaxed">
-                  {product.description || 'No description provided for this product.'}
+                  {product.description ||
+                    'No description provided for this product.'}
                 </p>
               </div>
 
@@ -159,7 +164,9 @@ const ProductDetail = () => {
 
               {/* Product Details */}
               <div className="mt-8 pt-8 border-t border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-800 mb-4">Product Details</h3>
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                  Product Details
+                </h3>
                 <div className="space-y-3 text-sm">
                   <div className="flex justify-between">
                     <span className="text-gray-600">Category:</span>

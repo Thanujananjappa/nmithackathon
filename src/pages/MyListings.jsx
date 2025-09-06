@@ -17,8 +17,9 @@ const MyListings = () => {
     try {
       const response = await productAPI.getProducts();
       // Filter to show only current user's products
-      const userProducts = response.data.filter(product => 
-        product.user_id === JSON.parse(localStorage.getItem('user')).id
+      const user = JSON.parse(localStorage.getItem('user'));
+      const userProducts = response.data.filter(
+        (product) => product.user_id === user.id
       );
       setProducts(userProducts);
     } catch (err) {
@@ -35,7 +36,7 @@ const MyListings = () => {
 
     try {
       await productAPI.deleteProduct(productId);
-      setProducts(products.filter(product => product.id !== productId));
+      setProducts(products.filter((product) => product.id !== productId));
     } catch (err) {
       setError('Failed to delete product');
     }
@@ -64,7 +65,7 @@ const MyListings = () => {
                 <p className="text-gray-600">Manage your products</p>
               </div>
             </div>
-            
+
             <Link
               to="/add-product"
               className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-lg font-semibold flex items-center space-x-2 transition-colors"
@@ -99,15 +100,18 @@ const MyListings = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {products.map(product => (
-              <div key={product.id} className="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+            {products.map((product) => (
+              <div
+                key={product.id}
+                className="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow"
+              >
                 <div className="flex">
                   <img
-                    src={product.image}
+                    src={product.image || '/default.png'}
                     alt={product.title}
                     className="w-32 h-32 object-cover"
                   />
-                  
+
                   <div className="flex-1 p-4">
                     <div className="flex justify-between items-start mb-2">
                       <h3 className="text-lg font-semibold text-gray-800 line-clamp-1">
@@ -117,11 +121,11 @@ const MyListings = () => {
                         {product.category}
                       </span>
                     </div>
-                    
+
                     <p className="text-gray-600 text-sm mb-3 line-clamp-2">
                       {product.description || 'No description provided'}
                     </p>
-                    
+
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-4 text-sm text-gray-500">
                         <div className="flex items-center">
@@ -132,10 +136,12 @@ const MyListings = () => {
                         </div>
                         <div className="flex items-center">
                           <Calendar className="h-4 w-4 mr-1" />
-                          <span>{new Date(product.created_at).toLocaleDateString()}</span>
+                          <span>
+                            {new Date(product.created_at).toLocaleDateString()}
+                          </span>
                         </div>
                       </div>
-                      
+
                       <div className="flex items-center space-x-2">
                         <Link
                           to={`/product/${product.id}`}

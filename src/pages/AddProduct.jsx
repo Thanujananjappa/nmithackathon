@@ -1,30 +1,42 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { productAPI } from '../services/api';
-import FormInput from '../components/FormInput';
-import LoadingSpinner from '../components/LoadingSpinner';
-import { Package, DollarSign, Tag, FileText, Image, ArrowLeft } from 'lucide-react';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { productAPI } from "../services/api";
+import LoadingSpinner from "../components/LoadingSpinner";
+import { ArrowLeft } from "lucide-react";
 
-const CATEGORIES = ['Electronics', 'Fashion', 'Books', 'Home', 'Others'];
+const CATEGORIES = ["Electronics", "Fashion", "Books", "Home", "Others"];
 
 const AddProduct = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    category: 'Electronics',
-    price: '',
-    image: ''
+    title: "",
+    description: "",
+    category: "Electronics",
+    price: "",
+    image: null,
   });
+  const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const handleInputChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-    setError('');
+    const { name, value, files } = e.target;
+
+    if (files) {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: files[0],
+      }));
+
+      setPreview(URL.createObjectURL(files[0])); // local preview
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
+
+    setError("");
   };
 
   const handleSubmit = async (e) => {
@@ -32,16 +44,23 @@ const AddProduct = () => {
     setLoading(true);
 
     try {
-      const productData = {
-        ...formData,
-        price: parseFloat(formData.price),
-        image: formData.image || 'https://images.pexels.com/photos/974911/pexels-photo-974911.jpeg'
-      };
+      const formDataToSend = new FormData();
+      formDataToSend.append("title", formData.title);
+      formDataToSend.append("description", formData.description);
+      formDataToSend.append("category", formData.category);
+      formDataToSend.append("price", formData.price);
 
-      await productAPI.createProduct(productData);
-      navigate('/my-listings');
+      if (formData.image) {
+        formDataToSend.append("image", formData.image);
+      }
+
+      await productAPI.createProduct(formDataToSend, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      navigate("/my-listings");
     } catch (err) {
-      setError(err.response?.data?.error || 'Failed to create product');
+      setError(err.response?.data?.error || "Failed to create product");
     } finally {
       setLoading(false);
     }
@@ -57,122 +76,89 @@ const AddProduct = () => {
               onClick={() => navigate(-1)}
               className="mb-4 flex items-center text-emerald-100 hover:text-white transition-colors"
             >
-              <ArrowLeft className="h-5 w-5 mr-2" />
-              Back
+              <ArrowLeft className="h-5 w-5 mr-2" /> Back
             </button>
-            
-            <div className="flex items-center space-x-4">
-              <div className="bg-white/20 p-3 rounded-full">
-                <Package className="h-8 w-8" />
-              </div>
-              <div>
-                <h1 className="text-3xl font-bold">List New Product</h1>
-                <p className="text-emerald-100 mt-1">Share your items with the community</p>
-              </div>
-            </div>
+            <h1 className="text-3xl font-bold">List New Product</h1>
           </div>
 
           {/* Form */}
           <div className="p-8">
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Product Title *
-                </label>
-                <FormInput
+                <label className="block font-medium mb-1">Title</label>
+                <input
                   type="text"
                   name="title"
-                  placeholder="Enter product title"
                   value={formData.title}
                   onChange={handleInputChange}
                   required
-                  icon={Package}
+                  className="w-full border rounded-lg px-3 py-2"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Category *
-                </label>
-                <div className="relative">
-                  <Tag className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-                  <select
-                    name="category"
-                    value={formData.category}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                  >
-                    {CATEGORIES.map(category => (
-                      <option key={category} value={category}>{category}</option>
-                    ))}
-                  </select>
-                </div>
+                <label className="block font-medium mb-1">Category</label>
+                <select
+                  name="category"
+                  value={formData.category}
+                  onChange={handleInputChange}
+                  className="w-full border rounded-lg px-3 py-2"
+                >
+                  {CATEGORIES.map((c) => (
+                    <option key={c}>{c}</option>
+                  ))}
+                </select>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Description
-                </label>
-                <div className="relative">
-                  <FileText className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-                  <textarea
-                    name="description"
-                    placeholder="Describe your product..."
-                    value={formData.description}
-                    onChange={handleInputChange}
-                    rows="4"
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent resize-none"
-                  />
-                </div>
+                <label className="block font-medium mb-1">Description</label>
+                <textarea
+                  name="description"
+                  value={formData.description}
+                  onChange={handleInputChange}
+                  placeholder="Describe your product..."
+                  className="w-full border rounded-lg px-3 py-2 h-24"
+                />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Price ($) *
-                </label>
-                <FormInput
+                <label className="block font-medium mb-1">Price ($)</label>
+                <input
                   type="number"
                   name="price"
-                  placeholder="0.00"
                   value={formData.price}
                   onChange={handleInputChange}
                   required
-                  min="0"
-                  step="0.01"
-                  icon={DollarSign}
+                  className="w-full border rounded-lg px-3 py-2"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Image URL (Optional)
-                </label>
-                <FormInput
-                  type="url"
+                <label className="block font-medium mb-1">Image</label>
+                <input
+                  type="file"
                   name="image"
-                  placeholder="https://example.com/image.jpg"
-                  value={formData.image}
+                  accept="image/*"
                   onChange={handleInputChange}
-                  icon={Image}
+                  className="w-full"
                 />
-                <p className="text-sm text-gray-500 mt-1">
-                  Leave empty to use a default placeholder image
-                </p>
+                {preview && (
+                  <img
+                    src={preview}
+                    alt="Preview"
+                    className="mt-4 h-40 object-cover rounded-lg border"
+                  />
+                )}
               </div>
 
-              {error && (
-                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
-                  {error}
-                </div>
-              )}
+              {error && <p className="text-red-500 text-sm">{error}</p>}
 
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-300 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200"
+                className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2 rounded-lg font-medium transition-colors"
               >
-                {loading ? <LoadingSpinner size="sm" /> : 'Create Product'}
+                {loading ? <LoadingSpinner size="sm" /> : "Create Product"}
               </button>
             </form>
           </div>
